@@ -1,19 +1,18 @@
-## Étape 3 — Calcul de la position du robot
+## Étape 4 — Suivi de ligne
 
 ### Objectif
-implémenter le bloc 3. 
+implémenter le bloc 4(automate permettant au robot de suivre une ligne noire)
 
 ### Réalisation
-- rajout des fichiers suivant dans le projet : 
-    - capteurs_sol.vhd
-    - capteurs_sol_seuil.vhd
-    - pll_2freqs.vhd
+- le bloc 4 que nous avons implémenté est trouvable sous le nom : **v4/suivi_ligne.vhd**
+- Il attend que le signal start_SL passe à 1 pour effectuer le suivi de ligne.
+- les commandes PWM sur les 2 moteurs se fait de la manière suivante : 
+    pwm_d := CONST_PWM + bias;
+    pwm_g := CONST_PWM - bias;
+    tel que : bias <= pos_ligne * GAIN;
+    avec : GAIN = 256 
+- en l'absense de ligne, le robot s'arrete et fin_SL est mis à 1
 
-- Nous avons ensuite effectué le seuillage des capteurs de la manière suivante : 
-    - etape 1 : Pous avons implémenté une description vhdl (que nous avons mis dans **v3/temp_sensors_caracterisation.txt**) qui permet d'afficher les valeurs retournées par les capteurs en binaire sur les leds. Les switchs sont utilisés pour sélectionné le capteur voulu (par exemple si switchs = 101 alors c'est la valeur retournée par le capteur n°05 qui est indiquée en binaire sur les leds)
-    - etape 2 : Pour chaque capteur, nous avons prélevé 5 valeurs de noir et 5 valeurs de blanc 
-    - etape 3 : Nous avons effectué la moyenne des blancs et des noirs vues par chaque capteurs. Ensuite, nous avons pris le max de tout les valeurs de blanc et le min de tout les valeurs de noir, puis nous avons calculé la moyenne de ces deux valeurs. Nous avons alors trouvé une valeur de 105 approximativement, soit en hexadecimal 0x69.
-    - NB : les détails de la caractérisation sont trouvable en **page 2** du document **caractéristation des éléments du robot.xlsx**
-    
-- Nous avons implémenté **v3/calcul_position.vhd** qui permet de calculer la position de la ligne selon la formule **pos_ligne <= PPU + PDU - 6**. Ainsi nous obtenons une valeur de pos_ligne allant de -6 à +6 
+### Tests réalisés : 
+Nous avons effectué un suivi de ligne avec start_SL pouvant être mis à 0 ou à 1 à l'aide d'un switch et les signaux fin_SL et start_SL étant affichés sur les leds.
 
